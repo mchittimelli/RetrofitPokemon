@@ -17,13 +17,31 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 PokemonRecycleAdapter adapter;
+ArrayList pokeArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         GetDataService service= RetrofitClientInstance .getRetrofitInstance().create(GetDataService.class);
-        Call<List<Pokemon>> call= service.getPokemons();
+
+       Call<PokemonPojo> call= service.getPokemonObj();
+
+      call.enqueue(new Callback<PokemonPojo>() {
+          @Override
+          public void onResponse(Call<PokemonPojo> call, Response<PokemonPojo> response) {
+              PokemonPojo pokemonPojo=response.body();
+              pokeArray=new ArrayList<>(pokemonPojo.getPokemon());
+              generateData(pokeArray);
+          }
+
+          @Override
+          public void onFailure(Call<PokemonPojo> call, Throwable t) {
+              Toast.makeText(getApplicationContext(),"Try it later..!",Toast.LENGTH_LONG).show();
+          }
+      });
+
+       /* Call<List<Pokemon>> call= service.getPokemons();
 
         call.enqueue(new Callback<List<Pokemon>>() {
             @Override
@@ -35,14 +53,14 @@ PokemonRecycleAdapter adapter;
             public void onFailure(Call<List<Pokemon>> call, Throwable t) {
                 Toast.makeText(getApplicationContext(),"Try it later..!",Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
 
     }
 
-    public void generateData(List<Pokemon> pokemonsList){
+    public void generateData(ArrayList<Pokemon> pokemonsList){
 
-        ArrayList<Pokemon> pokes=(ArrayList<Pokemon>) pokemonsList;
-        adapter=new PokemonRecycleAdapter(pokes,getApplicationContext());
+     /*   ArrayList<Pokemon> pokes=(ArrayList<Pokemon>) pokemonsList;*/
+        adapter=new PokemonRecycleAdapter(pokemonsList,getApplicationContext());
         @SuppressLint("WrongConstant") LinearLayoutManager linearLayout=new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL,false);
         RecyclerView recyclerView=findViewById(R.id.recycle_poke);
         recyclerView.setLayoutManager(linearLayout);

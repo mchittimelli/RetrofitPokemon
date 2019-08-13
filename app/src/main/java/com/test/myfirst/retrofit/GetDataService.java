@@ -10,4 +10,6 @@ public interface GetDataService {
     @GET("Vy2abloQD")
     Call<List<Pokemon>> getPokemons();
 
+    @GET("E14trR2lD")
+    Call<PokemonPojo> getPokemonObj();
 }
